@@ -71,3 +71,4 @@ data/*.db-journal
 data/*.db-wal
 templates/captures/
 *.log
+data/temp/
