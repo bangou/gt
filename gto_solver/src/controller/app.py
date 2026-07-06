@@ -193,6 +193,7 @@ class App(tk.Tk):
         self.stop_event = threading.Event()
         self.thread: RecognitionThread | None = None
         self._temp_db = _get_temp_db()
+        self._hud: object | None = None  # HudOverlay or None
 
         self._build_ui()
         self._poll_queue()
@@ -310,6 +311,9 @@ class App(tk.Tk):
         self.btn_stop.config(state="normal")
         self.lbl_status.config(text="状态: 识别中...")
 
+        # 启动 HUD 悬浮窗
+        self._start_hud()
+
     def _stop(self) -> None:
         self._log("停止识别线程...")
         self.stop_event.set()
@@ -319,6 +323,85 @@ class App(tk.Tk):
         self.btn_start.config(state="normal")
         self.btn_stop.config(state="disabled")
         self.lbl_status.config(text="状态: 已停止")
+
+        # 停止 HUD
+        self._stop_hud()
+
+    # ── HUD 管理 ────────────────────────────────────────────────
+
+    def _start_hud(self) -> None:
+        """启动透明 HUD 悬浮窗。"""
+        try:
+            from display.hud import HudOverlay
+            self._hud = HudOverlay(
+                target_window_title="WePoker",
+                width=380,
+                height=260,
+                font_size=16,
+            )
+            self._hud.start()
+            self._log("HUD 悬浮窗已启动")
+        except ImportError as e:
+            self._log(f"HUD 启动失败 (缺少依赖): {e}")
+            self._hud = None
+        except Exception as e:
+            self._log(f"HUD 启动失败: {e}")
+            self._hud = None
+
+    def _stop_hud(self) -> None:
+        """停止 HUD 悬浮窗。"""
+        if self._hud is not None:
+            try:
+                self._hud.stop()
+                self._log("HUD 悬浮窗已停止")
+            except Exception as e:
+                self._log(f"HUD 停止出错: {e}")
+            self._hud = None
+
+    def _update_hud(self, hero: list[str], comm: list[str], gto: dict | None, data: dict) -> None:
+        """将最新数据推送到 HUD 悬浮窗。"""
+        if self._hud is None:
+            return
+
+        try:
+            hud_data: dict = {
+                "hero": hero,
+                "community": comm,
+                "fps": data.get("fps", 0),
+                "elapsed_ms": data.get("elapsed_ms", 0),
+            }
+
+            is_turn = data.get("is_turn", True)
+            if not is_turn:
+                hud_data["status"] = "waiting"
+                hud_data["action"] = "--"
+            elif gto and gto.get("status") == "success":
+                hud_data["status"] = "running"
+                strategy = gto.get("strategy", {})
+                range_info = gto.get("range_info", {})
+                hud_data["action"] = range_info.get("recommended_action", "--")
+
+                # 组装频率字符串
+                freq_parts = []
+                for action in ["fold", "check", "call", "bet", "raise"]:
+                    if action in strategy and isinstance(strategy[action], (int, float)):
+                        freq_parts.append(f"{action}: {strategy[action]:.0f}%")
+                hud_data["frequency"] = "  ".join(freq_parts) if freq_parts else ""
+
+                hud_data["confidence"] = gto.get("confidence", "unknown")
+                equity = range_info.get("equity", 0)
+                if equity:
+                    hud_data["frequency"] += f"  |  Equity: {equity:.1f}%"
+            elif hero:
+                hud_data["status"] = "running"
+                hud_data["action"] = "识别中..."
+            else:
+                hud_data["status"] = "idle"
+                hud_data["action"] = "--"
+
+            self._hud.update(hud_data)
+        except Exception:
+            pass  # HUD 更新失败不影响主界面
 
     # ── 关闭 ─────────────────────────────────────────────────────
 
@@ -407,10 +490,16 @@ class App(tk.Tk):
 
             conf_color = {"high": "绿色", "medium": "黄色", "low": "红色"}.get(confidence, "")
             self.lbl_gto_conf.config(text=f"可信度: {confidence} ({conf_color})")
+
+            # ── 更新 HUD 悬浮窗 ──
+            self._update_hud(hero, comm, gto, data)
         else:
             self.lbl_gto_action.config(text="推荐动作: --")
             self.lbl_gto_freq.config(text="频率: --")
             self.lbl_gto_conf.config(text="可信度: --")
+
+            # HUD 也更新手牌/公共牌（即使没有 GTO 结果）
+            self._update_hud(hero, comm, gto, data)
 
         self.lbl_fps.config(text=f"帧率: {data['fps']} fps")
         self.lbl_cycle.config(text=f"周期: {data['cycle']}")

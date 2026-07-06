@@ -257,7 +257,10 @@ ActionTrigger.is_hero_turn(frame)
 | 9-max RFI | 1,352 行 | UTG~BTN 各位置完整 169 手牌范围 (Upswing Poker 公开表) |
 | 6-max RFI | 845 行 | UTG~BTN 各位置 (Upswing Poker 公开表) |
 | BB 盲注防守 | 249 行 | BB vs BTN open (call/3bet/fold) |
-| **总计** | **2,470 行** | **16 个场景** |
+| **vs RFI 防守 (新)** | **2,197 行** | **各位置面对开池的 3bet/call/fold** |
+| **vs 3bet (新)** | **2,197 行** | **Hero 开池被 3bet 后的 4bet/call/fold** |
+| **翻后 cbet 纹理 (新)** | **80 行** | **8 种牌面纹理 × BTN cbet + BB defense** |
+| **总计** | **6,950 行** | **22 个场景** |
 
 ### 已覆盖的场景
 

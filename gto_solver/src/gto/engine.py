@@ -148,6 +148,15 @@ def _build_strategy_payload(actions: list[dict]) -> tuple[dict, str]:
         else:
             entry["sizes"].append({"size_bb": float(size_bb), "prob": probability})
 
+    # Fallback: if no action has size_bb=None, pick the action with highest total probability
+    if not recommended_action and grouped:
+        best_total = -1.0
+        for action, entry in grouped.items():
+            total_prob = (entry["prob"] or 0) + sum(s["prob"] for s in entry["sizes"])
+            if total_prob > best_total:
+                best_total = total_prob
+                recommended_action = action
+
     strategy: dict[str, object] = {}
     for action, entry in grouped.items():
         if entry["prob"] is not None:
