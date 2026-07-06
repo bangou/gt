@@ -244,7 +244,8 @@ gto1.0/gto_solver/
 | 2026-07-06 | **Change A 补全: 触发检测+数字识别+JSON桥接+GTO查询** | `action_detector.py`、`number_reader.py`、`game_state_bridge.py`，主界面接入 GTO 策略显示 |
 | 2026-07-06 | **数据库分离** | render 库（模板匹配用，209 文件） vs real 库（截图裁剪入库用） |
 | 2026-07-06 | **GTO 数据扩充 (B)** | 9-max RFI + 6-max RFI + BB 盲注防守，**2,440 行新数据导入，SQLite 总计 2,470 行，16 个场景** |
-| 2026-07-06 | **多分辨率适配 (F)** | `roi_config.py` 支持动态缩放，`src/utils/coords.py` 统一坐标计算（基准 1920×1080 → 实际窗口比例） |
+| 2026-07-06 | **多分辨率适配 (F)** | `roi_config.py` 支持动态缩放 |
+| 2026-07-06 | **项目评审文档** | `docs/project-review.md` — 完整中文项目状态报告 |
 
 ---
 
