@@ -1,5 +1,1 @@
-# Card recognition
-# =================
-#
-# High-accuracy hero and community card recognition using
-# template matching + HSV suit verification + multi-frame voting.
+"""图像识别模块：OCR + 模板匹配管线"""

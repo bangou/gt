@@ -1,5 +1,1 @@
-# Game state parser
-# ==================
-#
-# Assembles recognized cards, positions, pot/bet amounts
-# into a standard GTO query JSON payload.
+"""游戏状态建模：数据结构与状态解析"""

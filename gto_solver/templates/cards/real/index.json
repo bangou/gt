@@ -1,0 +1,146 @@
+{
+  "7c": {
+    "file": "7c.png",
+    "rank": "7",
+    "suit": "c",
+    "is_red": false,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "Kh": {
+    "file": "Kh.png",
+    "rank": "K",
+    "suit": "h",
+    "is_red": true,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "2s": {
+    "file": "2s.png",
+    "rank": "2",
+    "suit": "s",
+    "is_red": false,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "Ac": {
+    "file": "Ac.png",
+    "rank": "A",
+    "suit": "c",
+    "is_red": false,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "9c": {
+    "file": "9c.png",
+    "rank": "9",
+    "suit": "c",
+    "is_red": false,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "5d": {
+    "file": "5d.png",
+    "rank": "5",
+    "suit": "d",
+    "is_red": true,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "8h": {
+    "file": "8h.png",
+    "rank": "8",
+    "suit": "h",
+    "is_red": true,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "6s": {
+    "file": "6s.png",
+    "rank": "6",
+    "suit": "s",
+    "is_red": false,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "Td": {
+    "file": "Td.png",
+    "rank": "T",
+    "suit": "d",
+    "is_red": true,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  },
+  "2h": {
+    "file": "2h.png",
+    "rank": "2",
+    "suit": "h",
+    "is_red": true,
+    "confidence": 0.9999945163726807,
+    "width": 50,
+    "height": 73
+  },
+  "Jd": {
+    "file": "Jd.png",
+    "rank": "J",
+    "suit": "d",
+    "is_red": true,
+    "confidence": 0.9999945163726807,
+    "width": 50,
+    "height": 73
+  },
+  "Ah": {
+    "file": "Ah.png",
+    "rank": "A",
+    "suit": "h",
+    "is_red": true,
+    "confidence": 0.9999953508377075,
+    "width": 50,
+    "height": 73
+  },
+  "Qd": {
+    "file": "Qd.png",
+    "rank": "Q",
+    "suit": "d",
+    "is_red": true,
+    "confidence": 0.9999937415122986,
+    "width": 50,
+    "height": 73
+  },
+  "8d": {
+    "file": "8d.png",
+    "rank": "8",
+    "suit": "d",
+    "is_red": true,
+    "confidence": 0.9999950528144836,
+    "width": 50,
+    "height": 73
+  },
+  "6h": {
+    "file": "6h.png",
+    "rank": "6",
+    "suit": "h",
+    "is_red": true,
+    "confidence": 0.9999961853027344,
+    "width": 50,
+    "height": 73
+  },
+  "6c": {
+    "file": "6c.png",
+    "rank": "6",
+    "suit": "c",
+    "is_red": false,
+    "confidence": 1.0,
+    "width": 50,
+    "height": 73
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "h4": {
+    "raw": "h4_raw.png",
+    "bin": "h4_bin.png",
+    "rank": "4",
+    "suit": "h",
+    "is_red": true
+  },
+  "h6": {
+    "raw": "h6_raw.png",
+    "bin": "h6_bin.png",
+    "rank": "6",
+    "suit": "h",
+    "is_red": true
+  },
+  "sk": {
+    "raw": "sk_raw.png",
+    "bin": "sk_bin.png",
+    "rank": "K",
+    "suit": "s",
+    "is_red": false
+  }
+}

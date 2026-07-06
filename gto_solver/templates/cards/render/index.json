@@ -1,0 +1,504 @@
+{
+  "2c": {
+    "raw": "2c_raw.png",
+    "bin": "2c_bin.png",
+    "rank": "2",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "2h": {
+    "raw": "2h_raw.png",
+    "bin": "2h_bin.png",
+    "rank": "2",
+    "suit": "h",
+    "is_red": true,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "6c": {
+    "raw": "6c_raw.png",
+    "bin": "6c_bin.png",
+    "rank": "6",
+    "suit": "c",
+    "is_red": false
+  },
+  "6h": {
+    "raw": "6h_raw.png",
+    "bin": "6h_bin.png",
+    "rank": "6",
+    "suit": "h",
+    "is_red": true
+  },
+  "8d": {
+    "raw": "8d_raw.png",
+    "bin": "8d_bin.png",
+    "rank": "8",
+    "suit": "d",
+    "is_red": true
+  },
+  "9h": {
+    "raw": "9h_raw.png",
+    "bin": "9h_bin.png",
+    "rank": "9",
+    "suit": "h",
+    "is_red": true
+  },
+  "Ah": {
+    "raw": "Ah_raw.png",
+    "bin": "Ah_bin.png",
+    "rank": "A",
+    "suit": "h",
+    "is_red": true,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "Jd": {
+    "raw": "Jd_raw.png",
+    "bin": "Jd_bin.png",
+    "rank": "J",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Qd": {
+    "raw": "Qd_raw.png",
+    "bin": "Qd_bin.png",
+    "rank": "Q",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Ad": {
+    "raw": "Ad_raw.png",
+    "bin": "Ad_bin.png",
+    "rank": "A",
+    "suit": "d",
+    "is_red": true
+  },
+  "Qc": {
+    "raw": "Qc_raw.png",
+    "bin": "Qc_bin.png",
+    "rank": "Q",
+    "suit": "c",
+    "is_red": false
+  },
+  "3d": {
+    "raw": "3d_raw.png",
+    "bin": "3d_bin.png",
+    "rank": "3",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Qs": {
+    "raw": "Qs_raw.png",
+    "bin": "Qs_bin.png",
+    "rank": "Q",
+    "suit": "s",
+    "is_red": false,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "4d": {
+    "raw": "4d_raw.png",
+    "bin": "4d_bin.png",
+    "rank": "4",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Kd": {
+    "raw": "Kd_raw.png",
+    "bin": "Kd_bin.png",
+    "rank": "K",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "7c": {
+    "raw": "7c_raw.png",
+    "bin": "7c_bin.png",
+    "rank": "7",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Kh": {
+    "raw": "Kh_raw.png",
+    "bin": "Kh_bin.png",
+    "rank": "K",
+    "suit": "h",
+    "is_red": true,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "2s": {
+    "raw": "2s_raw.png",
+    "bin": "2s_bin.png",
+    "rank": "2",
+    "suit": "s",
+    "is_red": false,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Ac": {
+    "raw": "Ac_raw.png",
+    "bin": "Ac_bin.png",
+    "rank": "A",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "9c": {
+    "raw": "9c_raw.png",
+    "bin": "9c_bin.png",
+    "rank": "9",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "5d": {
+    "raw": "5d_raw.png",
+    "bin": "5d_bin.png",
+    "rank": "5",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "8h": {
+    "raw": "8h_raw.png",
+    "bin": "8h_bin.png",
+    "rank": "8",
+    "suit": "h",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "6s": {
+    "raw": "6s_raw.png",
+    "bin": "6s_bin.png",
+    "rank": "6",
+    "suit": "s",
+    "is_red": false,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "Td": {
+    "raw": "Td_raw.png",
+    "bin": "Td_bin.png",
+    "rank": "T",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "4h": {
+    "raw": "4h_raw.png",
+    "bin": "4h_bin.png",
+    "rank": "4",
+    "suit": "h",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "7d": {
+    "raw": "7d_raw.png",
+    "bin": "7d_bin.png",
+    "rank": "7",
+    "suit": "d",
+    "is_red": true,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "3c": {
+    "raw": "3c_raw.png",
+    "bin": "3c_bin.png",
+    "rank": "3",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "5c": {
+    "raw": "5c_raw.png",
+    "bin": "5c_bin.png",
+    "rank": "5",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      908,
+      873,
+      50,
+      73
+    ]
+  },
+  "Kc": {
+    "raw": "Kc_raw.png",
+    "bin": "Kc_bin.png",
+    "rank": "K",
+    "suit": "c",
+    "is_red": false,
+    "position": [
+      963,
+      873,
+      50,
+      73
+    ]
+  },
+  "2d": {
+    "rank": "2",
+    "suit": "2d_suit.png",
+    "is_red": true,
+    "raw": "2d_raw.png",
+    "bin": "2d_bin.png"
+  },
+  "3h": {
+    "rank": "3",
+    "suit": "3h_suit.png",
+    "is_red": true,
+    "raw": "3h_raw.png",
+    "bin": "3h_bin.png"
+  },
+  "3s": {
+    "rank": "3",
+    "suit": "3s_suit.png",
+    "is_red": false,
+    "raw": "3s_raw.png",
+    "bin": "3s_bin.png"
+  },
+  "4c": {
+    "rank": "4",
+    "suit": "4c_suit.png",
+    "is_red": false,
+    "raw": "4c_raw.png",
+    "bin": "4c_bin.png"
+  },
+  "4s": {
+    "rank": "4",
+    "suit": "4s_suit.png",
+    "is_red": false,
+    "raw": "4s_raw.png",
+    "bin": "4s_bin.png"
+  },
+  "5h": {
+    "rank": "5",
+    "suit": "5h_suit.png",
+    "is_red": true,
+    "raw": "5h_raw.png",
+    "bin": "5h_bin.png"
+  },
+  "5s": {
+    "rank": "5",
+    "suit": "5s_suit.png",
+    "is_red": false,
+    "raw": "5s_raw.png",
+    "bin": "5s_bin.png"
+  },
+  "6d": {
+    "rank": "6",
+    "suit": "6d_suit.png",
+    "is_red": true,
+    "raw": "6d_raw.png",
+    "bin": "6d_bin.png"
+  },
+  "7h": {
+    "rank": "7",
+    "suit": "7h_suit.png",
+    "is_red": true,
+    "raw": "7h_raw.png",
+    "bin": "7h_bin.png"
+  },
+  "7s": {
+    "rank": "7",
+    "suit": "7s_suit.png",
+    "is_red": false,
+    "raw": "7s_raw.png",
+    "bin": "7s_bin.png"
+  },
+  "8c": {
+    "rank": "8",
+    "suit": "8c_suit.png",
+    "is_red": false,
+    "raw": "8c_raw.png",
+    "bin": "8c_bin.png"
+  },
+  "8s": {
+    "rank": "8",
+    "suit": "8s_suit.png",
+    "is_red": false,
+    "raw": "8s_raw.png",
+    "bin": "8s_bin.png"
+  },
+  "9d": {
+    "rank": "9",
+    "suit": "9d_suit.png",
+    "is_red": true,
+    "raw": "9d_raw.png",
+    "bin": "9d_bin.png"
+  },
+  "9s": {
+    "rank": "9",
+    "suit": "9s_suit.png",
+    "is_red": false,
+    "raw": "9s_raw.png",
+    "bin": "9s_bin.png"
+  },
+  "As": {
+    "rank": "A",
+    "suit": "As_suit.png",
+    "is_red": false,
+    "raw": "As_raw.png",
+    "bin": "As_bin.png"
+  },
+  "Jc": {
+    "rank": "J",
+    "suit": "Jc_suit.png",
+    "is_red": false,
+    "raw": "Jc_raw.png",
+    "bin": "Jc_bin.png"
+  },
+  "Jh": {
+    "rank": "J",
+    "suit": "Jh_suit.png",
+    "is_red": true,
+    "raw": "Jh_raw.png",
+    "bin": "Jh_bin.png"
+  },
+  "Js": {
+    "rank": "J",
+    "suit": "Js_suit.png",
+    "is_red": false,
+    "raw": "Js_raw.png",
+    "bin": "Js_bin.png"
+  },
+  "Ks": {
+    "rank": "K",
+    "suit": "Ks_suit.png",
+    "is_red": false,
+    "raw": "Ks_raw.png",
+    "bin": "Ks_bin.png"
+  },
+  "Qh": {
+    "rank": "Q",
+    "suit": "Qh_suit.png",
+    "is_red": true,
+    "raw": "Qh_raw.png",
+    "bin": "Qh_bin.png"
+  },
+  "Tc": {
+    "rank": "T",
+    "suit": "Tc_suit.png",
+    "is_red": false,
+    "raw": "Tc_raw.png",
+    "bin": "Tc_bin.png"
+  },
+  "Th": {
+    "rank": "T",
+    "suit": "Th_suit.png",
+    "is_red": true,
+    "raw": "Th_raw.png",
+    "bin": "Th_bin.png"
+  },
+  "Ts": {
+    "rank": "T",
+    "suit": "Ts_suit.png",
+    "is_red": false,
+    "raw": "Ts_raw.png",
+    "bin": "Ts_bin.png"
+  }
+}

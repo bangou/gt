@@ -1,4 +1,8 @@
-# WePoker 实时 GTO 策略助手 - 最终开发蓝图 V1.0
+# WePoker 实时 GTO 策略助手 — 开发蓝图 V2.0
+
+> **版本**: V2.0 | **日期**: 2026-07-06 | **状态**: Phase 0 完成，屏幕分析管线已合并，准备进入 Comet 开发
+
+---
 
 ## 1. 项目目标
 
@@ -18,68 +22,148 @@
 ## 3. 整体架构
 
 ```
-[屏幕捕获] → [区域定位与界面检测] → [手牌/公共牌识别] → [局势解析]
-        ↓                         ↓
-[行动触发检测]           [下注/底池数字识别]
-        ↓
-[GTO 解算库查询] → [HUD + 主窗口显示]
+[屏幕捕获] → [区域定位] → [牌面检测] → [牌面识别] → [局势解析]
+                                                    ↓
+                                        [GTO 解算库查询]
+                                                    ↓
+                                        [HUD + 主窗口显示]
+```
+
+### 3.1 数据流
+
+```
+截图 (mss/DXGI, BGR numpy)
+  → ROI 裁剪 (座位、公共牌、底池、Hero 区)
+  → CardDetector 找牌 (多阈值轮廓分析)
+  → CardMatcher 模板匹配 (rank ROI + 红黑判定 + Hu 矩花色细分)
+  → GameState 组装 (Card/Suit/Rank/Street → JSON)
+  → get_gto_strategy(json) 查询 SQLite
+  → 策略 → HUD 悬浮窗
 ```
 
 ---
 
-## 4. 模块详细职责与补充缺口
+## 4. 模块现状与进度
 
-### 模块 1+2：屏幕捕获与界面状态检测
+### 模块 1+2：屏幕捕获与界面状态检测 ← 🟢 已整合
 
-- 找到 WePoker 窗口，按窗口客户区截图。
-- 动态坐标映射（基准 1920×1080，比例缩放），支持窗口移动/缩放。
-- **行动触发检测**：当界面出现"弃牌/跟注/加注"按钮时（通过模板匹配或颜色检测），启动完整识别流程；按钮消失则清除建议。
-- **庄位识别**：识别桌面上的庄位标记（Dealer 图标），计算你的相对位置。
-- **多桌预留**：CaptureSource 抽象类，当前实现为单窗口，未来可扩展 OBS 源。
+| 项目 | 状态 |
+|------|------|
+| 窗口查找 | ✅ `src/capture/window_manager.py` — pygetwindow 按标题找 WePoker 窗口 |
+| 高速截图 | ✅ `src/capture/screen_capture.py` — mss (DXGI) 截图，numpy/PIL/bytes 多格式 |
+| ROI 区域管理 | ✅ `src/roi/roi_manager.py` + `roi_config.py` — 6 座座位+公共牌+底池+Hero 区 |
+| 自动校准 | ✅ `src/roi/calibrate.py` — 绿色桌面检测 + 轮廓分析自动标定 |
+| 行动触发检测 | ❌ 未实现 — 需要模板匹配"弃牌/跟注/加注"按钮 |
+| 庄位标记识别 | ❌ 未实现 |
+| 动态坐标缩放 | ❌ 未实现 — 当前硬编码 1920×1080 |
+| 多桌预留 | ❌ 未实现 |
 
-### 模块 3：手牌与公共牌高精度识别
+### 模块 3：手牌与公共牌高精度识别 ← 🟢 已整合 + 🎉 52 张牌模板库已补齐
 
-- 严格按照《高精度手牌/公共牌识别模块技术规格》实现。
-- 模板匹配 + HSV 花色校验 + 5 帧投票，错误率必须为 0。
-- 包含异常兜底和手动校准模式。
+| 项目 | 状态 |
+|------|------|
+| 牌面检测 | ✅ `src/recognition/card_detector.py` — 多阈值轮廓分析，宽高比 0.40-0.90，去重合并 |
+| 模板匹配 | ✅ `src/recognition/card_templates.py` — rank ROI 匹配 + 红黑判定 + Hu 矩花色细分 |
+| 多层 fallback | ✅ `src/recognition/card_recognizer.py` — 模板匹配 → OCR → 颜色分析 |
+| 52 张牌模板库 | ✅ `templates/cards/hero/` — raw/bin/rank/suit 四种格式各 52 张，含 index.json |
+| Hero 牌识别准确率 | ✅ **100%** (82/82，41 张真实 WePoker 截图验证) |
+| 公共牌识别准确率 | ✅ **100%** (60/60，5 组 flop/turn/river 截图验证) |
+| 5 帧投票机制 | ❌ 未实现 — 当前单帧识别，PRD 要求 5 帧多数一致才输出 |
+| 座位检测 | ✅ `src/recognition/seat_detector.py` — 加权投票（"+"号、肤色、HoughCircles、纹理） |
 
-### 模块 4：局势解析器
+### 模块 4：局势解析器 ← 🟡 部分就绪
 
-- 调用识别结果，组装完整局面 JSON。
-- **下注/底池数字识别**：对固定区域的数字，使用数字模板匹配（0-9 + 小数点），手工输入兜底。
-- 庄位与座位计算：用户设置座位号 + 庄位标记识别 = 动态位置。
-- 生成符合 GTO 查询协议的标准输入。
+| 项目 | 状态 |
+|------|------|
+| GameState 数据模型 | ✅ `src/parser/models.py` — dataclass (Card/Suit/Rank/Street/Action/GameState) |
+| 座位角色分配 | ✅ `src/parser/seat_assigner.py` — BTN→顺时针分配 UTG/HJ/CO/BTN/SB/BB |
+| 组装 GTO 查询 JSON | ❌ 未实现 — 需要桥接识别结果 → GTO 协议 JSON |
+| 下注/底池数字识别 | ❌ 未实现 |
+| 行动历史追踪 | ❌ 未实现 |
 
-### 模块 5：GTO 解算库
+### 模块 5：GTO 解算库 ← 🟡 Alpha 版
 
-- 实现协议函数 `get_gto_strategy(json_str) -> json_str`。
-- 离线 SQLite 数据库，存储策略频率。
-- 优先构建翻前 6 人桌 100BB 全覆盖（RFI、vs RFI、vs 3bet、冷跟、盲注防守）。
-- 翻后至少覆盖常见纹理和 SRP 场景，数据初期用免费公开表 + 启发式。
-- **降级策略**：查不到时，模糊匹配近似局面或给出保守默认策略，HUD 显示"低可信度"警告。
-- 数据源升级：PRD 中保留 GTO Wizard 购买提醒，采集方式为人工+脚本辅助，禁止自动抓取。
+| 项目 | 状态 |
+|------|------|
+| `get_gto_strategy()` | ✅ `src/gto/engine.py` — JSON in / JSON out |
+| SQLite 存储 | ✅ `src/gto/store.py` + `importer.py` — UNIQUE 约束，CSV/JSONL 导入 |
+| 协议完整性 | ✅ 可选字段默认值、check/bet 动作、confidence 字段、降级查询 |
+| 测试 | ✅ 4/4 pytest passed |
+| 数据量 | ⚠️ SQLite 30 行，覆盖 6 个场景 — **仅可联调，不可实战** |
+| 翻前 9-max 全覆盖 | ❌ 未实现 |
+| 翻后数据 | ❌ 仅 2 个 heuristic 示例 |
 
-### 模块 6：策略显示与 HUD
+### 模块 6：策略显示与 HUD ← ❌ 未开始
 
-- 主窗口显示详细文字策略和可选范围图。
-- HUD 为独立透明顶层窗口（`WS_EX_LAYERED`），无鼠标拦截。
-- 显示简要推荐动作、频率、可信度指示（高/低/默认）。
-- 支持快捷键开关和透明度滑块。
+### 模块 7：配置与工具 ← ❌ 未开始
 
-### 模块 7：配置与工具
-
-- 保存/加载配置：校准坐标、座位号、HUD 透明度、快捷键。
-- **模板录制工具**：当游戏更新皮肤时，可重新录制点数/花色/按钮模板。
-- 日志记录识别和查询结果。
-
-### 模块 8：主控制器与事件循环
-
-- 循环检测行动触发 → 采集多帧 → 识别 → 组装局面 → 查询 GTO → 更新 HUD。
-- 当前单桌管理，预留多桌管理器接口。
+### 模块 8：主控制器与事件循环 ← ❌ 未开始
 
 ---
 
-## 5. GTO 查询协议（最终版）
+## 5. 项目文件结构
+
+```
+gto1.0/gto_solver/
+├── CLAUDE.md                    # AI 入口文件
+├── VERSION                      # 语义版本号
+├── pyproject.toml               # Python 包配置
+├── requirements.txt             # opencv-python, numpy, pyautogui, pywin32, pytest
+├── .gitignore
+│
+├── src/
+│   ├── capture/                 # ✅ 模块 1: 屏幕捕获
+│   │   ├── window_manager.py    #    找 WePoker 窗口
+│   │   └── screen_capture.py    #    mss DXGI 截图
+│   ├── roi/                     # ✅ 模块 2: 区域定位
+│   │   ├── roi_config.py        #    硬编码 ROI（1920×1080）
+│   │   ├── roi_manager.py       #    区域裁剪
+│   │   └── calibrate.py         #    自动校准
+│   ├── recognition/             # ✅ 模块 3: 牌面识别
+│   │   ├── card_detector.py     #    多阈值轮廓检测
+│   │   ├── card_templates.py    #    rank ROI 模板匹配
+│   │   ├── card_recognizer.py   #    多层 fallback 识别器
+│   │   └── seat_detector.py     #    座位占用检测
+│   ├── parser/                  # 🟡 模块 4: 局势解析
+│   │   ├── models.py            #    Card/Suit/Rank/GameState dataclass
+│   │   └── seat_assigner.py     #    Dealer→座位角色分配
+│   ├── gto/                     # 🟡 模块 5: GTO 解算库 (Alpha)
+│   │   ├── api.py               #    get_gto_strategy() 入口
+│   │   ├── engine.py            #    查询引擎
+│   │   ├── codec.py             #    协议编解码
+│   │   ├── store.py             #    SQLite 查询
+│   │   ├── importer.py          #    CSV/JSONL 导入
+│   │   ├── bootstrap.py         #    数据库初始化
+│   │   └── models.py            #    NormalizedRequest
+│   ├── display/                 # ❌ 模块 6: 空壳
+│   ├── controller/              # ❌ 模块 8: 空壳
+│   └── utils/                   # ❌ 模块 7: 空壳
+│
+├── templates/cards/             # 🎉 52 张牌模板库
+│   ├── hero/                    #    52 张 raw + bin + rank + suit + index.json
+│   └── community/               #    3 张社区牌模板
+│
+├── data/
+│   ├── seed/gto_data.csv        #    翻前+翻后示例数据 (30 行)
+│   └── sqlite/gto_solver.db     #    SQLite 策略库
+│
+├── screenshots/test/            #    41 张 WePoker 真实截图 (测试集)
+│
+├── tests/
+│   ├── test_api.py              #    GTO 解算库 3 个测试
+│   ├── test_importer.py         #    CSV 导入测试
+│   └── conftest.py
+│
+├── openspec/
+│   └── specs/                   #    4 个主 spec (screen-analysis, gto-solver, display-hud, controller)
+│
+└── docs/
+    └── prd.md                   #    本文档
+```
+
+---
+
+## 6. GTO 查询协议
 
 ### 输入
 
@@ -102,7 +186,7 @@
 }
 ```
 
-- 允许 `effective_stack_bb`、`board`、`actions_history` 缺省，使用默认值。
+- `effective_stack_bb`、`board`、`actions_history` 可选，缺省默认值（100BB、空牌面、空历史）。
 
 ### 输出
 
@@ -127,119 +211,55 @@
 }
 ```
 
-- 动作必须能表达 check/bet，不限于 fold/call/raise。
-- `confidence` 字段：`"high"` 精确匹配，`"medium"` 模糊匹配，`"low"` 使用默认策略。
+- 动作支持 `check`/`bet`/`fold`/`call`/`raise`。
+- `confidence`: `"high"` (精确匹配), `"medium"` (模糊匹配), `"low"` (默认回退)。
 
 ---
 
-## 6. 数据源与升级提醒
+## 7. 数据源与升级提醒
 
-**当前阶段**：使用免费公开范围表（Codex 整理），覆盖翻前核心，翻后使用启发式规则。
+**当前阶段**：使用免费公开范围表，覆盖翻前核心，翻后使用启发式规则。
 
-**📌 升级提醒**（记录于 PRD 中，后续智能体将主动提及）
-当满足以下任一条件时，提示你订阅 GTO Wizard 一个月（约 $49）进行数据升级：
+**📌 升级提醒**：当以下任一条件满足时，提示订阅 GTO Wizard 一个月（约 $49）：
+- 软件进入实际使用测试阶段
+- 翻后策略明显不足或用户反馈建议质量低
+- 主动询问如何提升策略准确性
 
-- 软件进入实际使用测试阶段。
-- 翻后策略明显不足或用户反馈建议质量低。
-- 主动询问如何提升策略准确性。
-
-届时提供"关键局面采集清单"，通过人工+浏览器脚本导出数据，再导入库中。
+采集方式为人工+浏览器脚本导出，禁止自动抓取。
 
 ---
 
-## 7. 里程碑与当前执行
-
-| 模块 | 当前执行者 | 状态 | 下一步动作 |
-|------|-----------|------|------------|
-| 5. GTO 解算库 | Codex | 🔄 执行中 | 见下方 Codex 启动指令 |
-| 1+2+3+4 | Claude Code | ⏳ 就绪 | 见下方 Claude 启动指令 |
-| 6,7,8 | 待集成 | ⏳ 后续 | 核心模块完成后进行 |
-
----
-
-## 8. 给 Codex 的最终启动指令
-
-> **请按顺序执行以下任务，完成后汇报进度。**
->
-> **任务 1：修正协议缺口**
-> - 在 GTO 解算库的设计 spec 中，将 `effective_stack_bb`、`board`、`actions_history` 设为可选字段，缺省时使用安全默认值（100BB、空牌面、空历史），不视为错误。
-> - 响应动作列表必须能原生表达 `check` 和 `bet`，不限于 `fold/call/raise`，且动作语义与输入上下文匹配。
-> - 响应 JSON 中增加 `"confidence"` 字段（"high"/"medium"/"low"），标识匹配精度。
->
-> **任务 2：实现最小可运行版本**
-> - 创建 Python 包 `gto_solver`。
-> - 初始化 SQLite 数据库，表结构使用之前提供的 schema（含 UNIQUE 约束）。
-> - 编写 `get_gto_strategy(json_str)` 函数，严格遵循输入输出协议。
-> - 实现降级查询：精确匹配失败时，尝试忽略动作历史或放宽纹理匹配；仍失败则返回通用保守策略（fold/check 为主），confidence 设为 "low"。
-> - 编写 3 个 pytest 测试：正常查询、不支持局面返回 error、缺失字段使用默认值成功。
->
-> **任务 3：导入翻前关键场景数据**
-> - 按照《免费表关键局面清单》整理数据，转化为 CSV 格式：
->   - 表头：`table_size,position,effective_stack_bb,street,hand_key,board_texture_key,action_history_key,action,size_bb,probability,source,notes`
->   - 优先 6 人桌 100BB 的：RFI、vs RFI、vs 3bet、cold call、盲注防守。
->   - 手牌使用 169 简化表示（AKs, AKo, 22 等）。
->   - 同一局面所有动作概率之和为 100。
-> - 使用提供的 Python 导入脚本将 CSV 写入 SQLite。
-> - 翻后数据若暂无，street 全部填 preflop，board_texture_key 填 none。
->
-> **所有完成后，请输出：**
-> 1. 当前数据库中的总行数和覆盖的场景数。
-> 2. 一个完整的请求/响应示例（翻前 BTN RFI AKs）。
-> 3. 所有测试通过的结果。
-
----
-
-## 9. 给 Claude Code 的最终启动指令
-
-> **项目背景**：为 WePoker 开发屏幕分析模块，要求 Python，不注入游戏进程。
->
-> **请一次性实现以下模块，代码结构清晰，有详细注释。**
->
-> **模块 A：屏幕捕获与界面状态检测 (screen_capture.py)**
-> - 找到 WePoker 窗口（标题包含"WePoker"），获取客户区尺寸。
-> - 使用 `BitBlt` 或 `pyautogui` 对客户区截图，返回 numpy 数组。
-> - 动态坐标计算：基准 1920×1080，按当前窗口比例缩放。
-> - 设计 `CaptureSource` 抽象类，当前实现为 `WindowCapture`，预留扩展接口（如未来 OBS 源）。
-> - 实现两个检测函数（基于模板匹配，模板占位由后续录制提供）：
->   - `is_hero_turn()`：检查界面是否出现"弃牌/跟注/加注"按钮，返回 True/False。
->   - `detect_dealer_position()`：识别庄位标记，返回座位编号（0-5）。
-> - 配置文件 `config.json` 存储：窗口标题、基准坐标、用户座位号。
->
-> **模块 B：牌面区域定位 (table_region.py)**
-> - 根据当前窗口比例，计算手牌区域（2 张牌的矩形）和公共牌区域（3-5 个矩形）。
-> - 提供 `calibrate()` 函数：弹出窗口让用户点击自己的第一张手牌和第一张公共牌，保存偏移量到配置。
->
-> **模块 C：高精度手牌/公共牌识别 (card_recognizer.py)**
-> - 严格遵循以下规格：
->   - 单张牌分割：水平投影或固定间距。
->   - 点数/花色区域提取：左上固定偏移。
->   - 模板匹配：分别与 13 张点数模板和 4 张花色模板匹配，阈值 0.80/0.75。
->   - 花色 HSV 颜色校验：红色（红心/方块）和黑色（黑桃/梅花）判定，优先颜色结果。
->   - 多帧投票：连续抓 5 帧，每帧独立识别，多数一致才输出，最多重试 3 次，否则报警。
-> - 暂时使用占位模板，代码中需预留 `templates/` 目录，说明如何制作模板。
->
-> **模块 D：局势解析器 (game_state.py)**
-> - 接收识别结果（手牌、公共牌）、庄位、下注数字识别结果（初期可手动输入），组装成 GTO 查询 JSON。
-> - 实现 `read_number_region(image)`：对固定数字区域使用数字模板匹配（0-9 模板），或调用简易 OCR 作为备选。
-> - 位置映射：根据用户座位号和庄位计算标准位置字符串（UTG/MP/HJ/CO/BTN/SB/BB）。
->
-> **要求**：
-> - 所有模块提供独立测试入口。
-> - 输出一个综合测试脚本 `test_modules.py`，模拟一次从截图到 JSON 的完整流程（使用一张示例截图）。
-> - 明确指出哪些部分需要用户在 WePoker 上实际截取模板后替换。
-
----
-
-*文档版本: V1.0 | 创建日期: 2026-07-06*
-
----
-
-## 开发进度备注
+## 8. 开发进度日志
 
 | 日期 | 事项 | 备注 |
 |------|------|------|
-| 2026-07-06 | Phase 0 基础设施搭建 | CLAUDE.md、.gitignore、Python 骨架、OpenSpec 主规格（4 个 capability）、openspec/config.yaml 上下文填充 |
-| 2026-07-06 | PRD 定稿 | 写入 `docs/prd.md`，推送到 GitHub |
-| 2026-07-06 | 定期推送 | cron 每 30 分钟自动 commit（conventional）+ semver bump + tag + push |
-| 2026-07-06 | 当前版本 | v0.1.0 — 4 个 OpenSpec 主 spec 就绪，Python 骨架就绪，待进入 Comet open 阶段 |
-| 2026-07-06 | **模块 5: GTO 解算库 Alpha 版集成** | Codex 交付，已合并到 `src/gto/`。4/4 测试通过，SQLite 30 行，覆盖 6 个场景（翻前 RFI + vs RFI + 翻后 cbet/defense）。`get_gto_strategy()` 可直接调用，可选字段默认值、check/bet 动作表达、错误返回都已打通。**状态: 可联调，不可实战** |
+| 2026-07-06 | Phase 0 基础设施 | CLAUDE.md、.gitignore、Python 骨架、OpenSpec 4 个主 spec |
+| 2026-07-06 | PRD V1.0 定稿 | 写入 `docs/prd.md` |
+| 2026-07-06 | 模块 5 Alpha 集成 | Codex 交付 `src/gto/`，4/4 tests passed，SQLite 30 行，6 场景 |
+| 2026-07-06 | **gto_agent 屏幕分析管线合并** | capture + roi + recognition + parser 模块从 `D:\gto_agent` 迁移到 `src/` |
+| 2026-07-06 | **52 张牌模板库补齐** | 从 41 张真实截图中自动提取 23 张缺失 raw 模板，52/52 raw+bin+rank+suit 齐全 |
+| 2026-07-06 | **识别准确率验证** | Hero 82/82=100%, 公共牌 60/60=100%, 合计 142/142=100% |
+| 2026-07-06 | PRD V2.0 | 重写本文档，反映最新模块状态、文件结构、进度日志 |
+| 2026-07-06 | **管线补全: 5帧投票+临时库+主界面** | `multi_frame.py`、`temp_db.py`、`config.py`、`controller/app.py`（tkinter GUI） |
+| 2026-07-06 | **Change A 补全: 触发检测+数字识别+JSON桥接+GTO查询** | `action_detector.py`、`number_reader.py`、`game_state_bridge.py`，主界面接入 GTO 策略显示 |
+| 2026-07-06 | **数据库分离** | render 库（模板匹配用，209 文件） vs real 库（截图裁剪入库用） |
+| 2026-07-06 | **GTO 数据扩充 (B)** | 9-max RFI + 6-max RFI + BB 盲注防守，**2,440 行新数据导入，SQLite 总计 2,470 行，16 个场景** |
+| 2026-07-06 | **多分辨率适配 (F)** | `roi_config.py` 支持动态缩放，`src/utils/coords.py` 统一坐标计算（基准 1920×1080 → 实际窗口比例） |
+
+---
+
+## 9. 下一步方向
+
+按优先级排列：
+
+| 优先级 | 方向 | 说明 |
+|--------|------|------|
+| 🔴 P0 | **Change A: 屏幕分析管线补全** | 5 帧投票、行动触发检测、数字识别、GameState→JSON 桥接、端到端测试 |
+| 🔴 P0 | **Change B: GTO 数据扩充** | 9-max 100BB 翻前全覆盖、翻后常见纹理、vs open / blind defense 场景 |
+| 🟡 P1 | **Change C: HUD + 控制器** | 透明悬浮窗、事件循环、端到端跑通 |
+| 🟢 P2 | 动态分辨率适配 | 窗口相对坐标替代硬编码、基准 1920×1080 → 动态缩放 |
+| 🟢 P2 | 配置与模板录制工具 | config.json、log 系统、模板重录工具 |
+
+---
+
+*文档版本: V2.0 | 创建日期: 2026-07-06 | 维护者: Claude Code + 用户*
