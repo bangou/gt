@@ -178,6 +178,10 @@ class RecognitionThread(threading.Thread):
             # 如果没找到牌或不是自己的回合，等久一点（节省 CPU）
             if not hero_names or not is_turn:
                 time.sleep(0.3)
+            else:
+                # 使用可配置的轮询间隔
+                poll_ms = self._config.get("poll_interval_ms", 200)
+                time.sleep(poll_ms / 1000.0)
 
 
 # ── 主界面 ───────────────────────────────────────────────────────────
@@ -215,6 +219,15 @@ class App(tk.Tk):
 
         self.btn_stop = ttk.Button(btn_frame, text="停止识别", command=self._stop, state="disabled")
         self.btn_stop.pack(side="left", padx=5)
+
+        # 识别间隔 (ms)
+        ttk.Label(btn_frame, text="  间隔:").pack(side="left", padx=(15, 0))
+        self.interval_var = tk.IntVar(value=200)
+        self.interval_spin = ttk.Spinbox(btn_frame, from_=100, to=5000, increment=100,
+                                          textvariable=self.interval_var, width=5,
+                                          command=self._update_interval)
+        self.interval_spin.pack(side="left", padx=2)
+        ttk.Label(btn_frame, text="ms").pack(side="left")
 
         # 状态栏
         self.lbl_status = ttk.Label(self, text="状态: 就绪", font=("", 10, "bold"))
@@ -404,6 +417,14 @@ class App(tk.Tk):
             pass  # HUD 更新失败不影响主界面
 
     # ── 关闭 ─────────────────────────────────────────────────────
+
+    def _update_interval(self) -> None:
+        """更新 config 中的轮询间隔。"""
+        try:
+            from utils.config import set as cfg_set
+            cfg_set("poll_interval_ms", self.interval_var.get())
+        except Exception:
+            pass
 
     def _on_close(self) -> None:
         self._log("正在关闭...")
