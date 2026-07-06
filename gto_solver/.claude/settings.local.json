@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(comet --help)",
+      "Bash(comet -h)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/skills/comet/scripts/comet-hook-guard.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
