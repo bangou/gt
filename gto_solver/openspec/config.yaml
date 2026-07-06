@@ -1,13 +1,13 @@
-schema: spec-driven
-
 # Project context (optional)
 # This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech stack: Python 3.11+, OpenCV, NumPy, SQLite, Windows native GUI (win32gui, BitBlt, WS_EX_LAYERED)
+  We use conventional commits (feat:, fix:, docs:, refactor:, chore:)
+  All development follows Comet 5-phase workflow: open → design → build → verify → archive
+  Domain: Poker GTO (Game Theory Optimal) strategy assistant for WePoker
+  Core principles: zero injection (no process memory access), zero error card recognition, offline operation
+  See docs/prd.md for the complete development blueprint
+  See CLAUDE.md for project structure and conventions
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.

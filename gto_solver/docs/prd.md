@@ -231,3 +231,15 @@
 ---
 
 *文档版本: V1.0 | 创建日期: 2026-07-06*
+
+---
+
+## 开发进度备注
+
+| 日期 | 事项 | 备注 |
+|------|------|------|
+| 2026-07-06 | Phase 0 基础设施搭建 | CLAUDE.md、.gitignore、Python 骨架、OpenSpec 主规格（4 个 capability）、openspec/config.yaml 上下文填充 |
+| 2026-07-06 | PRD 定稿 | 写入 `docs/prd.md`，推送到 GitHub |
+| 2026-07-06 | 定期推送 | cron 每 30 分钟自动 commit（conventional）+ semver bump + tag + push |
+| 2026-07-06 | 当前版本 | v0.1.0 — 4 个 OpenSpec 主 spec 就绪，Python 骨架就绪，待进入 Comet open 阶段 |
+| 2026-07-06 | **模块 5: GTO 解算库 Alpha 版集成** | Codex 交付，已合并到 `src/gto/`。4/4 测试通过，SQLite 30 行，覆盖 6 个场景（翻前 RFI + vs RFI + 翻后 cbet/defense）。`get_gto_strategy()` 可直接调用，可选字段默认值、check/bet 动作表达、错误返回都已打通。**状态: 可联调，不可实战** |

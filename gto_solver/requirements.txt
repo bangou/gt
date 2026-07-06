@@ -1,0 +1,12 @@
+# Core
+opencv-python>=4.8.0
+numpy>=1.25.0
+pyautogui>=0.9.54
+pillow>=10.0.0
+
+# Windows GUI
+pywin32>=306
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
